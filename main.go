@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"sort"
 	"strconv"
 	"time"
@@ -17,13 +18,15 @@ import (
 )
 
 const FILE = "words.csv"
-const ENABLE_TRANS = false
+const ENABLE_TRANS = true
 
 func main() {
 	// config := new(Config)
 	// config.Load()
 
-	wordFile, err := os.OpenFile(FILE, os.O_RDWR|os.O_CREATE, os.ModePerm)
+	path, _ := os.Executable()
+	filePath := filepath.Join(filepath.Dir(path), FILE)
+	wordFile, err := os.OpenFile(filePath, os.O_RDWR|os.O_CREATE, os.ModePerm)
 	if err != nil {
 		panic(err)
 	}
@@ -121,8 +124,11 @@ func handler(saveFile map[string]*SaveFile, header *[]string) {
 			fmt.Println("transerr=", err.Error())
 		}
 		saveFileObj.Explain = txt
-		fmt.Println("->" + txt)
 	}
+	if len(saveFileObj.Explain) != 0 {
+		fmt.Println("->" + saveFileObj.Explain)
+	}
+
 }
 
 type SaveFile struct {
